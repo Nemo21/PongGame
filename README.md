@@ -71,3 +71,34 @@ function love.draw()
     push:apply('end')
 end
 ```
+
+## Lesson 2:
+
+- Now we will find a new font to get a retro feel    
+- Used to create a font object which we can use later
+
+```
+ smallFont = love.graphics.newFont('font.ttf', 8)
+```
+- How it is used
+
+```
+ love.graphics.setFont(smallFont)
+```
+
+- Wiping the screen with a color
+
+```
+love.graphics.clear(40/255, 45/255, 52/255, 255/255)
+```
+
+- Now we will also be sketching out our
+    - 2 paddles and a ball
+    - Along with a hello pong message
+    
+```
+love.graphics.rectangle('fill', 10, 30, 5, 20)
+```
+
+- Note everything is static right now
+- Read more about screen resolution

@@ -20,7 +20,7 @@ push = require 'push'
     Set window height and window width 
     which will be used throughout 
 ]]
-WINDOW_WIDTH=1280
+WINDOW_WIDTH=960
 WINDOW_HEIGHT=720
 
 --[[
@@ -43,6 +43,13 @@ function love.load()
     try removing this function to see the difference!
 ]]
     love.graphics.setDefaultFilter("nearest","nearest")
+    
+    --[[Getting a new font to give the game that retro feel]]
+    smallFont=love.graphics.newFont("font.ttf",8);
+    
+    --[[Set active font as this smallFont object]]
+    love.graphics.setFont(smallFont);
+    
     --[[
         function provided by the push library
         check push.lua for more info
@@ -75,8 +82,34 @@ end
 function love.draw()
     --[[begin rendering with virtual resolution]]
     push:apply('start')
+    
     --[[use virtual width and height]]
-    love.graphics.printf("Hello pong!",0,VIRTUAL_HEIGHT/2-6,VIRTUAL_WIDTH,"center")
+    
+    
+    --[[
+        When we start rendering,first clear the screen wipe with this color
+    ]]
+    
+    love.graphics.clear(40/255,45/255,52/255,255/255);
+    
+    --[[Now we need a welcome text towards top center of screen]]
+    
+    love.graphics.printf("Hello Pong!",0,20,VIRTUAL_WIDTH,'center')
+    
+    --[[Now we will draw the 2 paddles and a ball]]
+    
+    --[[First the left side paddle]]
+    
+    love.graphics.rectangle('fill',10,30,5,20);
+    
+    --[[Now the right side paddle]]
+    
+    love.graphics.rectangle('fill',VIRTUAL_WIDTH-10,VIRTUAL_HEIGHT-50,5,20);
+    
+    --[[Now we will draw the call in dead center]]
+    
+    love.graphics.rectangle('fill',VIRTUAL_WIDTH/2-2,VIRTUAL_HEIGHT/2-2,4,4);
+    
     --[[end rendering at virtual resolution]]
     push:apply('end')
 end
