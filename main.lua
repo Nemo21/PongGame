@@ -31,6 +31,10 @@ WINDOW_HEIGHT=720
 VIRTUAL_WIDTH=432
 VIRTUAL_HEIGHT=243
 
+--[[Speed of paddle,multiplied with dt with every frame]]
+
+PADDLE_SPEED=200
+
 --[[
     Function run when game first starts up
     and only once its run to initailize game
@@ -47,6 +51,9 @@ function love.load()
     --[[Getting a new font to give the game that retro feel]]
     smallFont=love.graphics.newFont("font.ttf",8);
     
+    --[[New font object for displaying scores of players]]
+    scoreFont=love.graphics.newFont("font.ttf",32)
+    
     --[[Set active font as this smallFont object]]
     love.graphics.setFont(smallFont);
     
@@ -59,8 +66,41 @@ function love.load()
         resizable=false,
         vsync=true
     })
+    
+    --[[Initialising the two player's score]]
+    player1Score=0
+    player2Score=0
+    
+    --[[Paddle positions of both the players]]
+    --[[We will only be changing Y because in pong only up and down movement is allowed]]
+    player1Y=30 --[[This will be positioned up]]
+    player2Y=VIRTUAL_HEIGHT-50 --[[This will be positioned down]]
 end
 
+--[[Runs every frame when time 'dt' has passed since the last frame]]
+--[[We need a function to test for longer periods of input]]
+--[[love.keyboard.isDown(key) continuously returns true if the key is pressed down]]
+
+function love.update(dt)
+    --[[Lets get player1 moving with keyevents]]
+    --[[Refer the coordinate system]]
+    if love.keyboard.isDown('w') then
+        --[[Move the paddle up substracting y to show the effect of moving up]]
+        player1Y=player1Y + -PADDLE_SPEED*dt
+    elseif love.keyboard.isDown('s') then
+        --[[Move the paddle down adding cuz y movements means adding]]
+        player1Y=player1Y+ PADDLE_SPEED*dt
+    end
+        
+    --[[Lets get player2 moving with keyevents]]
+    if love.keyboard.isDown('up') then
+        --[[Move the paddle up substracting y to show the effect of moving up]]
+        player2Y=player2Y + -PADDLE_SPEED * dt
+    elseif love.keyboard.isDown('down') then
+        --[[Move the paddle down adding cuz y movements means adding]]
+        player2Y=player2Y+ PADDLE_SPEED * dt
+    end
+end
 
 --[[
     Key event handling called by Love2D in each frame
@@ -85,7 +125,6 @@ function love.draw()
     
     --[[use virtual width and height]]
     
-    
     --[[
         When we start rendering,first clear the screen wipe with this color
     ]]
@@ -93,18 +132,25 @@ function love.draw()
     love.graphics.clear(40/255,45/255,52/255,255/255);
     
     --[[Now we need a welcome text towards top center of screen]]
-    
+    love.graphics.setFont(smallFont)
     love.graphics.printf("Hello Pong!",0,20,VIRTUAL_WIDTH,'center')
+    
+    --[[Draw the scores of both the players in the center]]
+    love.graphics.setFont(scoreFont)
+    love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH / 2 - 50, 
+        VIRTUAL_HEIGHT / 3)
+    love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH / 2 + 30,
+        VIRTUAL_HEIGHT / 3)
     
     --[[Now we will draw the 2 paddles and a ball]]
     
     --[[First the left side paddle]]
     
-    love.graphics.rectangle('fill',10,30,5,20);
+    love.graphics.rectangle('fill',10,player1Y,5,20);
     
     --[[Now the right side paddle]]
     
-    love.graphics.rectangle('fill',VIRTUAL_WIDTH-10,VIRTUAL_HEIGHT-50,5,20);
+    love.graphics.rectangle('fill',VIRTUAL_WIDTH-10,player2Y,5,20);
     
     --[[Now we will draw the call in dead center]]
     

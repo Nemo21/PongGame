@@ -102,3 +102,45 @@ love.graphics.rectangle('fill', 10, 30, 5, 20)
 
 - Note everything is static right now
 - Read more about screen resolution
+
+## Lesson 3:
+
+- Now we will add paddle movement along with player's score
+- For paddle movement we will need to define
+    - Paddle Speed
+    - Paddle positions and displacement
+- Paddle displacement which will need to be updated every frame(dt)
+- Paddle positions can only be along the Y which is up and down
+- Score init by 0 
+- We need to move while key is pressed for longer periods of time
+- love.keyboard.isDown(key) continuously returns true if the key is pressed down
+
+```
+--[[Lets get player1 moving with keyevents]]
+    --[[Refer the coordinate system]]
+    if love.keyboard.isDown('w') then
+        --[[Move the paddle up substracting y to show the effect of moving up]]
+        player1Y=player1Y + -PADDLE_SPEED*dt
+    elseif love.keyboard.isDown('s') then
+        --[[Move the paddle down adding cuz y movements means adding]]
+        player1Y=player1Y+ PADDLE_SPEED*dt
+    end
+```
+- Get scores of the players in the center
+- Mistakes:
+    - Forgot to add function end declaration
+        - Straight up error action BLUE SCREEN(COOKED ASF)
+        - FIX: Read the fucking error ffs
+    - Didnt draw rectangle movement with variable x and y for paddle
+        - Causing it to still be static
+        - FIX: added variable x and y in rectangle fill
+    - Forgot to add if end declaration because used to js {}
+        - Straight up error action BLUE SCREEN(COOKED ASF)
+        - FIX: Read the fucking error ffs
+    - Accidently used same key bindings for both the paddles 
+        - Causing it to move in a symmterical fashion
+        - FIX: Different key bindings for different paddles in keyboard.isDown
+        
+- Problem:
+    - The paddles movements go outside our virtual resolution
+    
