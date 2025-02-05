@@ -144,3 +144,31 @@ love.graphics.rectangle('fill', 10, 30, 5, 20)
 - Problem:
     - The paddles movements go outside our virtual resolution
     
+## Lesson 4:
+
+- Randomness and unpredictibility is an essential part of game development
+- Problems:
+    - The paddles movements go outside our virtual resolution
+    - Ball is static
+- Solutions:
+    - Use of math.min and math.max to avoid them from doing out of bounds
+    
+```
+
+ player1Y = math.max(0, player1Y + -PADDLE_SPEED * dt)
+ player1Y = math.min(VIRTUAL_HEIGHT - 20, player1Y + PADDLE_SPEED * dt)
+ 
+```
+- Use of math.randomseed to generate random number like seeds in minecraft but this function is pseudo random
+- It needs some starting value to base random numbers
+- But if we pass a static number it would generate same random numbers which defeats the whole purpose
+- For more randomness we will use os.time() 
+ - This returns time in seconds and is a large number
+- To actully get random we will use math.max and math.min
+- To get inclusive range numbers
+
+```
+    math.randomseed(os.time())
+    ballY = ballY + ballDY * dt 
+    --[[Change the value of y coordinate of ball every frame by ballldy velocity]]
+```
