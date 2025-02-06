@@ -12,6 +12,12 @@
    instead of however large our window is; 
    used to provide a more retro aesthetic 
 ]] push = require 'push'
+
+--[[Requiring the class package]]
+Class = require 'class'
+require 'Paddle'
+--[[Requiring the classes we made]]
+require 'Ball'
 --[[
     Set window height and window width 
     which will be used throughout 
@@ -75,19 +81,19 @@ function love.load()
 
     --[[Paddle positions of both the players]]
     --[[We will only be changing Y because in pong only up and down movement is allowed]]
-    player1Y = 30 --[[This will be positioned up]]
-    player2Y = VIRTUAL_HEIGHT - 50 --[[This will be positioned down]]
+
+    -- initialize our player paddles; make them global so that they can be
+    -- detected by other functions and modules
+    player1 = Paddle(10, 30, 5, 20) --[[This will be positioned up]]
+    player2 = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 30, 5, 20) --[[This will be positioned down]]
 
     --[[Keeping variables for position as it would change frame by framw with the velocity Dx and Dy]]
     --[[Initially in the center of the screen]]
-    ballX = VIRTUAL_WIDTH / 2 - 2
-    ballY = VIRTUAL_HEIGHT / 2 - 2
+    -- place a ball in the middle of the screen
+    ball = Ball(VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, 4, 4)
 
     --[[Movement of ball frame by frame multiplies with velocity 
         so it would move in a direction frame by frame]]
-
-    ballDX = math.random(2) == 1 and 100 or -100
-    ballDY = math.random(-50, 50)
 
     --[[Will use game state to change between start and play]]
     gameState = "start"
@@ -106,30 +112,36 @@ function love.update(dt)
         -- math.max returns the greater of two values; 0 and player Y
         -- will ensure we don't go above it
         --[[Move the paddle up substracting y to show the effect of moving up]]
-        player1Y = math.max(0, player1Y + -PADDLE_SPEED * dt)
+        player1.dy = -PADDLE_SPEED
     elseif love.keyboard.isDown('s') then
         -- add positive paddle speed to current Y scaled by deltaTime
         -- math.min returns the lesser of two values; bottom of the egde minus paddle height
         -- and player Y will ensure we don't go below it
         --[[Move the paddle down adding cuz y movements means adding]]
-        player1Y = math.min(VIRTUAL_HEIGHT - 20, player1Y + PADDLE_SPEED * dt)
+        player1.dy = PADDLE_SPEED
+    else
+        player1.dy = 0;
     end
 
     --[[Lets get player2 moving with keyevents]]
     if love.keyboard.isDown('up') then
         --[[Move the paddle up substracting y to show the effect of moving up]]
-        player2Y = math.max(0, player2Y + -PADDLE_SPEED * dt)
+        player2.dy = -PADDLE_SPEED
     elseif love.keyboard.isDown('down') then
         --[[Move the paddle down adding cuz y movements means adding]]
-        player2Y = math.min(VIRTUAL_HEIGHT - 20, player2Y + PADDLE_SPEED * dt)
+        player2.dy = PADDLE_SPEED
+    else
+        player2.dy = 0;
     end
 
     --[[Start the ball movement from center]]
+    -- update our ball based on its DX and DY only if we're in play state;
+    -- scale the velocity by dt so movement is framerate-independent
     if gameState == 'play' then
-        ballX = ballX + ballDX * dt
-        ballY = ballY + ballDY * dt
+        ball:update(dt)
     end
-
+    player1:update(dt)
+    player2:update(dt)
 end
 
 --[[
@@ -148,11 +160,7 @@ function love.keypressed(key)
         else
             gameState = "start"
             --[[When in start state, the ball will be in the center]]
-            ballX = VIRTUAL_WIDTH / 2 - 2
-            ballY = VIRTUAL_HEIGHT / 2 - 2
-
-            ballDX = math.random(2) == 1 and 100 or -100
-            ballDY = math.random(-50, 50) * 1.5
+            ball:reset()
         end
     end
 end
@@ -192,16 +200,16 @@ function love.draw()
 
     --[[First the left side paddle]]
 
-    love.graphics.rectangle('fill', 10, player1Y, 5, 20);
+    player1:render()
 
     --[[Now the right side paddle]]
 
-    love.graphics.rectangle('fill', VIRTUAL_WIDTH - 10, player2Y, 5, 20);
+    player2:render()
 
     --[[Now we will draw the call in dead center]]
     --[[Now we will render ball acc to the variable positon and velocity]]
 
-    love.graphics.rectangle('fill', ballX, ballY, 4, 4);
+    ball:render()
 
     --[[end rendering at virtual resolution]]
     push:apply('end')

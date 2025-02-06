@@ -35,7 +35,7 @@ end
         - The text and images are blurry by default
         - we need low res for more retro feel
 - Solution: 
-    - push is a library that will allow us to draw our game at a virtual resolution, 
+    - [push](https://github.com/Ulydev/push) is a library that will allow us to draw our game at a virtual resolution, 
     - instead of however large our window is used to provide a more retro aesthetic 
     - use nearest-neighbor filtering on upscaling and downscaling to prevent blurring of text and graphics
 - love.graphics.setDefaultFilter is a function for texture scaling which by default is bilinear
@@ -172,3 +172,25 @@ love.graphics.rectangle('fill', 10, 30, 5, 20)
     ballY = ballY + ballDY * dt 
     --[[Change the value of y coordinate of ball every frame by ballldy velocity]]
 ```
+
+## Lesson 5:
+
+- We do be scaling <3
+- We talking classes and objects for paddle and ball
+- Classes are blueprints fpr creating bundles of data and code that are related
+- Its gonna maintain its own state for us
+- Descriptive attributes about the class are: Fields
+- Methods that define behaviour of class are: Functions
+- Concrete object is instantiated from class blueprints
+- We will use the library [Class](https://github.com/vrld/hump)
+- This library allows us to create classes in lua without complications
+- Everything in lua is a table(similar to object in javascript)
+- A contructor:
+    - Self: Whatever object we are creating with class is going to be Self
+- Mistakes:
+    - Typo of using math.max instead of math.min
+    - Paddle after movement went back to the bottom of the screen and then out of the screen resolution
+    - FIX: Spending 5mins rereading what I wrote in class files
+    
+
+    
