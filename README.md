@@ -193,4 +193,21 @@ love.graphics.rectangle('fill', 10, 30, 5, 20)
     - FIX: Spending 5mins rereading what I wrote in class files
     
 
-    
+## Lesson 6:
+
+- Frames per second is to check performance of game
+- Setting title of game for beautification purposes.
+```
+love.window.setTitle(title)
+```
+- To check if game is running well or not we use 
+```
+love.timer.getFPS()
+```
+- We will draw this on our application
+- It returns a number so we will need to convert it to string to concatinate with string
+- Lua doesnt allow string and number concatination
+- We concatinate using the ".." 
+```
+love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 10)
+```

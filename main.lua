@@ -50,6 +50,7 @@ function love.load()
 ]]
     love.graphics.setDefaultFilter("nearest", "nearest")
 
+    love.window.setTitle("Pong")
     --[[
         like a random number generator takes a different initial value each time
         thanks to os.time
@@ -211,9 +212,19 @@ function love.draw()
 
     ball:render()
 
+    --[[Call display FPS]]
+    displayFPS()
+
     --[[end rendering at virtual resolution]]
     push:apply('end')
 end
 --[[
     printf("text to render",starting X,starting Y,number of pixels to center within,alignment mode)
 ]]
+
+function displayFPS()
+    --[[display FPS on left side of screen in green]]
+    love.graphics.setFont(smallFont)
+    love.graphics.setColor(0, 255 / 255, 0, 255 / 255)
+    love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 10)
+end
