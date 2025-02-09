@@ -211,3 +211,43 @@ love.timer.getFPS()
 ```
 love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 10)
 ```
+
+## Lesson 7:
+
+- Problem :
+    - The ball passes through the paddle.
+- Solution:
+    - NOTES AND INFORMATION ABOUT AABB(Axis-Aligned Bounding Boxes)
+        - Collison boxes(Reactangle,Quadrilaterals which have (x,y,width,height)) contain no rotation(completely parallel perpendicular to the axes)
+        - IDEA: No edges of our boxes are outside the opposite edge THIS MEANS THERE IS A COLLISION
+        - Some naming convention for simplicity:
+            - TE: Top edge
+            - BE: Bottom edge
+            - LE: Left edge
+            - RE: Right edge
+            - R1: Rectangle1
+            - R2: Rectangle2
+        - Condition for NO Collision(we will write a inverse query)
+            - If top and bottom condition
+                1. R1TE is BELOW R2BE 
+                    - Refer to the illustration in images/Case1OfTopAndBottom
+                2. R1BE is ABOVE R2TE
+                    - Refer to the illustration in images/Case2OfTopAndBottom
+            - If left and right condition
+                1. R1LE is RIGHT to R2RE
+                    - Refer to the illustration in images/Case1OfLeftAndRight
+                2. R1RE is LEFT to R2LE   
+                    - Refer to the illustration in images/Case2OfLeftAndRight
+        - When we detect a collison we need to do the following:
+            - Change the direction of velocity of the ball
+            - Change the position of the ball to avoid the ball to infinitely collide
+            - Randomise angle between paddle and ball when a collision happens
+            - Refer to the illustration in images/AngleOfDeflection
+- Problem:
+    - Ball ball passes through the screen wall infinitely        
+- Solution:
+    - Check if it went to the top of screen and went down the screen
+    - Set the position to top or bottom and  change the directon of the ball velocity
+    
+    
+            
