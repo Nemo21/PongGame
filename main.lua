@@ -151,6 +151,18 @@ function love.update(dt)
             ball.dy = -ball.dy
         end
     end
+
+    -- score for player two if ball went beyond the left edge which is actually the side of player 1
+    if ball.x < 0 then
+        player2Score = player2Score + 1
+        ball:reset()
+    end
+
+    -- score for player one if ball went beyond the right edge which is actually the side of player 2
+    if ball.x > VIRTUAL_WIDTH then
+        player1Score = player1Score + 1
+        ball:reset()
+    end
     --[[Lets get player1 moving with keyevents]]
     --[[Refer the coordinate system]]
     if love.keyboard.isDown('w') then
@@ -239,9 +251,9 @@ function love.draw()
     -- love.graphics.printf("Hello Pong!", 0, 20, VIRTUAL_WIDTH, 'center')
 
     --[[Draw the scores of both the players in the center]]
-    -- love.graphics.setFont(scoreFont)
-    -- love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH / 2 - 50, VIRTUAL_HEIGHT / 3)
-    -- love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH / 2 + 30, VIRTUAL_HEIGHT / 3)
+    love.graphics.setFont(scoreFont)
+    love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH / 2 - 50, VIRTUAL_HEIGHT / 3)
+    love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH / 2 + 30, VIRTUAL_HEIGHT / 3)
 
     --[[Now we will draw the 2 paddles and a ball]]
 
