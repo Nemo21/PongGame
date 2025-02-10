@@ -61,7 +61,7 @@ function love.load()
     smallFont = love.graphics.newFont("font.ttf", 8);
 
     --[[New font object for displaying scores of players]]
-    -- scoreFont = love.graphics.newFont("font.ttf", 32)
+    scoreFont = love.graphics.newFont("font.ttf", 32)
 
     --[[Set active font as this smallFont object]]
     love.graphics.setFont(smallFont);
@@ -105,6 +105,52 @@ end
 --[[love.keyboard.isDown(key) continuously returns true if the key is pressed down]]
 
 function love.update(dt)
+    -- Write the functionality for ball collision with paddle 
+    if gameState == 'play' then
+        if ball:collides(player1) then
+            -- change direction of velocity and increase it by an arbitary number
+            -- change the position of ball away from width of paddle to avoid infinite collision 
+            ball.dx = -ball.dx * 1.03
+            ball.x = player1.x - 5
+
+            -- keep velocity direction same after the bounce but randomise it 
+            if ball.dy < 0 then
+                ball.dy = -math.random(10, 150)
+            else
+                ball.dy = math.random(10, 150)
+            end
+        end
+
+        if ball:collides(player2) then
+            -- change direction of velocity and increase it by an arbitary number
+            -- change the position of ball away from width of paddle to avoid infinite collision 
+            ball.dx = -ball.dx * 1.03
+            ball.x = player2.x - 4
+
+            -- keep velocity direction same after the bounce but randomise it 
+            if ball.dy < 0 then
+                ball.dy = -math.random(10, 150)
+            else
+                ball.dy = math.random(10, 150)
+            end
+        end
+
+        -- if the ball went outside the bounds of the screen 
+        -- beyond top of the screen
+        -- bring it to the top and reverse the direction of velocity
+        if ball.y <= 0 then
+            ball.y = 0
+            ball.dy = -ball.dy
+        end
+
+        -- if the ball went outside the bounds of the screen 
+        -- beyond bottom of the screen
+        -- bring it to the bottom and reverse the direction of velocity
+        if ball.y >= VIRTUAL_HEIGHT - 4 then
+            ball.y = VIRTUAL_HEIGHT - 4
+            ball.dy = -ball.dy
+        end
+    end
     --[[Lets get player1 moving with keyevents]]
     --[[Refer the coordinate system]]
     if love.keyboard.isDown('w') then
