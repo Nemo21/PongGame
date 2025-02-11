@@ -250,4 +250,18 @@ love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 10)
     - Set the position to top or bottom and  change the directon of the ball velocity
     
     
-            
+## Lesson 8:
+
+- Making a state machine this case is of using if else not using a state machine class 
+- Monitoring what state we are in and what has to take place between states to bring new states
+- Each individual state has its own logic
+- Helps scaling and avoid monolith shit
+- Play state,serve state and game over state
+- A state can be in only any one particular state at one time
+- Transitions allow to to go between states.
+    - Each state does have transitions in and out of other states
+- Serve state:
+    - Player who lost the previous score gets to serve
+    - Scoring a point is trigger between going from play to serve state
+    - Pressing the enter key is trigger between going from serve state back to play state
+- GG cooked chat

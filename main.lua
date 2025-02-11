@@ -80,6 +80,8 @@ function love.load()
     player1Score = 0
     player2Score = 0
 
+    --[[Staring with serving player 1 and switch as player scores points slay queen]]
+    servingPlayer = 1
     --[[Paddle positions of both the players]]
     --[[We will only be changing Y because in pong only up and down movement is allowed]]
 
@@ -106,12 +108,19 @@ end
 
 function love.update(dt)
     -- Write the functionality for ball collision with paddle 
-    if gameState == 'play' then
+    if gameState == "serve" then
+        ball.dy = math.random(-50, 50)
+        if servingPlayer == 1 then
+            ball.dx = math.random(140, 200)
+        else
+            ball.dx = -math.random(140, 200)
+        end
+    elseif gameState == 'play' then
         if ball:collides(player1) then
             -- change direction of velocity and increase it by an arbitary number
             -- change the position of ball away from width of paddle to avoid infinite collision 
             ball.dx = -ball.dx * 1.03
-            ball.x = player1.x - 5
+            ball.x = player1.x + 5
 
             -- keep velocity direction same after the bounce but randomise it 
             if ball.dy < 0 then
@@ -154,14 +163,18 @@ function love.update(dt)
 
     -- score for player two if ball went beyond the left edge which is actually the side of player 1
     if ball.x < 0 then
+        servingPlayer = 1
         player2Score = player2Score + 1
         ball:reset()
+        gameState = "serve"
     end
 
     -- score for player one if ball went beyond the right edge which is actually the side of player 2
     if ball.x > VIRTUAL_WIDTH then
+        servingPlayer = 2
         player1Score = player1Score + 1
         ball:reset()
+        gameState = "serve"
     end
     --[[Lets get player1 moving with keyevents]]
     --[[Refer the coordinate system]]
@@ -215,11 +228,10 @@ function love.keypressed(key)
 
     elseif key == "enter" or key == "return" then
         if gameState == "start" then
+            gameState = "serve"
+        elseif gameState == "serve" then
             gameState = "play"
-        else
-            gameState = "start"
             --[[When in start state, the ball will be in the center]]
-            ball:reset()
         end
     end
 end
@@ -243,17 +255,22 @@ function love.draw()
 
     --[[Now we need a welcome text towards top center of screen]]
     love.graphics.setFont(smallFont)
+    displayScore()
     if gameState == "start" then
-        love.graphics.printf('Hello Start State!', 0, 20, VIRTUAL_WIDTH, 'center')
-    else
-        love.graphics.printf('Hello Play State!', 0, 20, VIRTUAL_WIDTH, 'center')
+        love.graphics.setFont(smallFont)
+        love.graphics.printf('Welcome to pong you slime!', 0, 10, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf('Press Enter to begin you bitch!', 0, 20, VIRTUAL_WIDTH, 'center')
+    elseif gameState == "serve" then
+        love.graphics.setFont(smallFont)
+        love.graphics
+            .printf('Player ' .. tostring(servingPlayer) .. " 's fucking serve", 0, 10, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("Pookie press enter to serve UwU", 0, 20, VIRTUAL_WIDTH, 'center')
+    elseif gameState == "play" then
+
     end
     -- love.graphics.printf("Hello Pong!", 0, 20, VIRTUAL_WIDTH, 'center')
 
     --[[Draw the scores of both the players in the center]]
-    love.graphics.setFont(scoreFont)
-    love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH / 2 - 50, VIRTUAL_HEIGHT / 3)
-    love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH / 2 + 30, VIRTUAL_HEIGHT / 3)
 
     --[[Now we will draw the 2 paddles and a ball]]
 
@@ -285,4 +302,10 @@ function displayFPS()
     love.graphics.setFont(smallFont)
     love.graphics.setColor(0, 255 / 255, 0, 255 / 255)
     love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 10)
+end
+
+function displayScore()
+    love.graphics.setFont(scoreFont)
+    love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH / 2 - 50, VIRTUAL_HEIGHT / 3)
+    love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH / 2 + 30, VIRTUAL_HEIGHT / 3)
 end
