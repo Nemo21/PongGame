@@ -265,3 +265,8 @@ love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 10)
     - Scoring a point is trigger between going from play to serve state
     - Pressing the enter key is trigger between going from serve state back to play state
 - GG cooked chat
+
+## Lesson 9:
+
+- In order for someone to win one has to score 10 points
+- Change state when player score hits 10 and reset score and ball

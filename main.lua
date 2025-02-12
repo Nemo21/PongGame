@@ -60,6 +60,7 @@ function love.load()
     --[[Getting a new font to give the game that retro feel]]
     smallFont = love.graphics.newFont("font.ttf", 8);
 
+    largeFont = love.graphics.newFont("font.ttf", 16)
     --[[New font object for displaying scores of players]]
     scoreFont = love.graphics.newFont("font.ttf", 32)
 
@@ -107,8 +108,9 @@ end
 --[[love.keyboard.isDown(key) continuously returns true if the key is pressed down]]
 
 function love.update(dt)
-    -- Write the functionality for ball collision with paddle 
-    if gameState == "serve" then
+    if gameState == 'serve' then
+        -- before switching to play, initialize ball's velocity based
+        -- on player who last scored
         ball.dy = math.random(-50, 50)
         if servingPlayer == 1 then
             ball.dx = math.random(140, 200)
@@ -116,27 +118,24 @@ function love.update(dt)
             ball.dx = -math.random(140, 200)
         end
     elseif gameState == 'play' then
+        -- detect ball collision with paddles, reversing dx if true and
+        -- slightly increasing it, then altering the dy based on the position of collision
         if ball:collides(player1) then
-            -- change direction of velocity and increase it by an arbitary number
-            -- change the position of ball away from width of paddle to avoid infinite collision 
             ball.dx = -ball.dx * 1.03
             ball.x = player1.x + 5
 
-            -- keep velocity direction same after the bounce but randomise it 
+            -- keep velocity going in the same direction, but randomize it
             if ball.dy < 0 then
                 ball.dy = -math.random(10, 150)
             else
                 ball.dy = math.random(10, 150)
             end
         end
-
         if ball:collides(player2) then
-            -- change direction of velocity and increase it by an arbitary number
-            -- change the position of ball away from width of paddle to avoid infinite collision 
             ball.dx = -ball.dx * 1.03
             ball.x = player2.x - 4
 
-            -- keep velocity direction same after the bounce but randomise it 
+            -- keep velocity going in the same direction, but randomize it
             if ball.dy < 0 then
                 ball.dy = -math.random(10, 150)
             else
@@ -144,78 +143,77 @@ function love.update(dt)
             end
         end
 
-        -- if the ball went outside the bounds of the screen 
-        -- beyond top of the screen
-        -- bring it to the top and reverse the direction of velocity
+        -- detect upper and lower screen boundary collision and reverse if collided
         if ball.y <= 0 then
             ball.y = 0
             ball.dy = -ball.dy
         end
 
-        -- if the ball went outside the bounds of the screen 
-        -- beyond bottom of the screen
-        -- bring it to the bottom and reverse the direction of velocity
+        -- -4 to account for the ball's size
         if ball.y >= VIRTUAL_HEIGHT - 4 then
             ball.y = VIRTUAL_HEIGHT - 4
             ball.dy = -ball.dy
         end
+
+        -- if we reach the left or right edge of the screen, 
+        -- go back to start and update the score
+        if ball.x < 0 then
+            servingPlayer = 1
+            player2Score = player2Score + 1
+
+            -- if we've reached a score of 10, the game is over; set the
+            -- state to done so we can show the victory message
+            if player2Score == 10 then
+                winningPlayer = 2
+                gameState = 'done'
+            else
+                gameState = 'serve'
+                -- places the ball in the middle of the screen, no velocity
+                ball:reset()
+            end
+        end
+
+        if ball.x > VIRTUAL_WIDTH then
+            servingPlayer = 2
+            player1Score = player1Score + 1
+
+            if player1Score == 10 then
+                winningPlayer = 1
+                gameState = 'done'
+            else
+                gameState = 'serve'
+                ball:reset()
+            end
+        end
     end
 
-    -- score for player two if ball went beyond the left edge which is actually the side of player 1
-    if ball.x < 0 then
-        servingPlayer = 1
-        player2Score = player2Score + 1
-        ball:reset()
-        gameState = "serve"
-    end
-
-    -- score for player one if ball went beyond the right edge which is actually the side of player 2
-    if ball.x > VIRTUAL_WIDTH then
-        servingPlayer = 2
-        player1Score = player1Score + 1
-        ball:reset()
-        gameState = "serve"
-    end
-    --[[Lets get player1 moving with keyevents]]
-    --[[Refer the coordinate system]]
+    -- player 1 movement
     if love.keyboard.isDown('w') then
-        -- add negative paddle speed to current Y scaled by deltaTime
-        -- now, we clamp our position between the bounds of the screen
-        -- math.max returns the greater of two values; 0 and player Y
-        -- will ensure we don't go above it
-        --[[Move the paddle up substracting y to show the effect of moving up]]
         player1.dy = -PADDLE_SPEED
     elseif love.keyboard.isDown('s') then
-        -- add positive paddle speed to current Y scaled by deltaTime
-        -- math.min returns the lesser of two values; bottom of the egde minus paddle height
-        -- and player Y will ensure we don't go below it
-        --[[Move the paddle down adding cuz y movements means adding]]
         player1.dy = PADDLE_SPEED
     else
-        player1.dy = 0;
+        player1.dy = 0
     end
 
-    --[[Lets get player2 moving with keyevents]]
+    -- player 2 movement
     if love.keyboard.isDown('up') then
-        --[[Move the paddle up substracting y to show the effect of moving up]]
         player2.dy = -PADDLE_SPEED
     elseif love.keyboard.isDown('down') then
-        --[[Move the paddle down adding cuz y movements means adding]]
         player2.dy = PADDLE_SPEED
     else
-        player2.dy = 0;
+        player2.dy = 0
     end
 
-    --[[Start the ball movement from center]]
     -- update our ball based on its DX and DY only if we're in play state;
     -- scale the velocity by dt so movement is framerate-independent
     if gameState == 'play' then
         ball:update(dt)
     end
+
     player1:update(dt)
     player2:update(dt)
 end
-
 --[[
     Key event handling called by Love2D in each frame
 ]]
@@ -232,6 +230,16 @@ function love.keypressed(key)
         elseif gameState == "serve" then
             gameState = "play"
             --[[When in start state, the ball will be in the center]]
+        elseif gameState == "done" then
+            gameState = "serve"
+            ball:reset()
+            player1Score = 0
+            player2Score = 0
+            if winningPlayer == 1 then
+                servingPlayer = 2
+            else
+                servingPlayer = 1
+            end
         end
     end
 end
@@ -267,6 +275,11 @@ function love.draw()
         love.graphics.printf("Pookie press enter to serve UwU", 0, 20, VIRTUAL_WIDTH, 'center')
     elseif gameState == "play" then
 
+    elseif gameState == "done" then
+        love.graphics.setFont(largeFont)
+        love.graphics.printf("Player " .. tostring(winningPlayer) .. "wins bitch", 0, 10, VIRTUAL_WIDTH, "center")
+        love.graphics.setFont(smallFont)
+        love.graphics.printf("Press enter to retard!", 0, 30, VIRTUAL_WIDTH, "center")
     end
     -- love.graphics.printf("Hello Pong!", 0, 20, VIRTUAL_WIDTH, 'center')
 
