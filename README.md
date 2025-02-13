@@ -270,3 +270,18 @@ love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 10)
 
 - In order for someone to win one has to score 10 points
 - Change state when player score hits 10 and reset score and ball
+
+## Lesson 10:
+
+- Adding some sounds 
+- use love.audio.newSource(path,[type])
+- Creats an audio object
+- Type is of two types:
+    - Stream: 
+        - Streams from disk as needed
+        - Works better for larger sound effects and music tracks
+    - Static: Preserved in memory
+- Use _ while creating a lua table for sounds,spaces dont Works
+- nameoftable[key]:function()
+- sounds["soundname"]:play()
+    
