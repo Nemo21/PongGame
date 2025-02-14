@@ -80,7 +80,7 @@ function love.load()
     ]]
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_HEIGHT, WINDOW_WIDTH, {
         fullscreen = false,
-        resizable = false,
+        resizable = true,
         vsync = true
     })
 
@@ -108,6 +108,14 @@ function love.load()
 
     --[[Will use game state to change between start and play]]
     gameState = "start"
+end
+
+--[[
+    Called by LÖVE whenever we resize the screen; here, we just want to pass in the
+    width and height to push so our virtual resolution can be resized as needed.
+]]
+function love.resize(w, h)
+    push:resize(w, h)
 end
 
 --[[Runs every frame when time 'dt' has passed since the last frame]]

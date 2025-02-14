@@ -285,3 +285,11 @@ love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, 10)
 - nameoftable[key]:function()
 - sounds["soundname"]:play()
     
+## Lesson 11:
+
+- Resize window with using resizeable true in push:setupScreen
+- Use love.resize(width,height)
+- Called by love everytime we resize the application
+- Push underneath the hood takes a texturee and renders to it and then upscales it to fit our window
+- Hence needs to know current window dimensions
+- Also adds letterboxing(Maintains exact same aspect ratio)
